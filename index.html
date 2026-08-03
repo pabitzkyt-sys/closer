@@ -1,22 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#17131f" />
-  <meta name="description" content="See how far away your favorite person is." />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17131f">
+  <meta name="description" content="See how far away your favorite person is.">
+  <link rel="manifest" href="manifest.webmanifest">
   <title>Closer</title>
   <style>
-    :root{font-family:Inter,ui-rounded,system-ui,-apple-system,sans-serif;color:#fff;background:#17131f;color-scheme:dark}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#663d70 0,#281d34 34%,#17131f 70%);display:grid;place-items:center;padding:24px}
-    main{width:min(100%,460px)}.brand{text-align:center;margin-bottom:28px}.heart{font-size:36px}.brand h1{font-size:42px;letter-spacing:-2px;margin:4px 0}.brand p{margin:0;color:#c7bcd1}
-    .card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 70px rgba(0,0,0,.35);backdrop-filter:blur(18px);border-radius:28px;padding:24px}
-    .distance{text-align:center;padding:18px 0 28px}.distance strong{display:block;font-size:64px;line-height:1;letter-spacing:-4px}.distance span{color:#d4c6df;font-size:18px}.status{text-align:center;color:#bbaac7;min-height:24px;margin:8px 0 20px}
-    label{display:block;color:#d6cadd;font-size:14px;margin:14px 0 7px}input,textarea{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2);color:white;border-radius:16px;padding:14px;font:inherit;outline:none}input:focus,textarea:focus{border-color:#c789db}
-    button{width:100%;border:0;border-radius:16px;padding:14px 18px;font:700 16px inherit;cursor:pointer;margin-top:12px;background:#f4d3ff;color:#291b30}button.secondary{background:rgba(255,255,255,.1);color:#fff}button:disabled{opacity:.55;cursor:not-allowed}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.code{font-size:28px;text-align:center;letter-spacing:6px;text-transform:uppercase}.tiny{font-size:12px;color:#a999b4;text-align:center;margin-top:16px}.hidden{display:none!important}
-    dialog{border:1px solid rgba(255,255,255,.15);border-radius:24px;background:#241b2c;color:white;width:min(92vw,520px);padding:22px}dialog::backdrop{background:rgba(0,0,0,.7)}textarea{height:170px;font-family:ui-monospace,monospace;font-size:12px}
+    :root{font-family:Inter,ui-rounded,system-ui,-apple-system,sans-serif;color:#fff;background:#17131f;color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#663d70 0,#281d34 34%,#17131f 70%);display:grid;place-items:center;padding:24px}main{width:min(100%,460px)}.brand{text-align:center;margin-bottom:28px}.heart{font-size:36px}.brand h1{font-size:42px;letter-spacing:-2px;margin:4px 0}.brand p{margin:0;color:#c7bcd1}.card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 70px rgba(0,0,0,.35);backdrop-filter:blur(18px);border-radius:28px;padding:24px}.distance{text-align:center;padding:18px 0 28px}.distance strong{display:block;font-size:64px;line-height:1;letter-spacing:-4px}.distance span{color:#d4c6df;font-size:18px}.status{text-align:center;color:#bbaac7;min-height:48px;margin:8px 0 20px}label{display:block;color:#d6cadd;font-size:14px;margin:14px 0 7px}input{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2);color:white;border-radius:16px;padding:14px;font:inherit;outline:none}input:focus{border-color:#c789db}button{width:100%;border:0;border-radius:16px;padding:14px 18px;font:700 16px inherit;cursor:pointer;margin-top:12px;background:#f4d3ff;color:#291b30}button.secondary{background:rgba(255,255,255,.1);color:#fff}button:disabled{opacity:.55;cursor:not-allowed}.code{font-size:28px;text-align:center;letter-spacing:6px;text-transform:uppercase}.tiny{font-size:12px;color:#a999b4;text-align:center;margin-top:16px}.hidden{display:none!important}
   </style>
 </head>
 <body>
@@ -24,22 +16,15 @@
   <div class="brand"><div class="heart">♥</div><h1>Closer</h1><p>Distance from my love</p></div>
   <section class="card">
     <div id="distancePanel" class="distance hidden"><strong id="distance">—</strong><span id="unit">miles apart</span></div>
-    <div id="status" class="status">Set up Firebase to begin secure live sharing.</div>
-
-    <div id="setupPanel">
-      <button id="configure">Configure Firebase</button>
-      <button id="demo" class="secondary">Preview demo</button>
-    </div>
-
+    <div id="status" class="status">Connecting securely…</div>
     <div id="pairPanel" class="hidden">
-      <label for="name">Your name</label><input id="name" maxlength="30" placeholder="Your name" />
+      <label for="name">Your name</label><input id="name" maxlength="30" placeholder="Your name">
       <button id="createPair">Create a pair</button>
-      <label for="pairCode">Or enter your partner's code</label><input id="pairCode" class="code" maxlength="6" placeholder="ABC123" />
+      <label for="pairCode">Or enter your partner's code</label><input id="pairCode" class="code" maxlength="6" placeholder="ABC123">
       <button id="joinPair" class="secondary">Join pair</button>
     </div>
-
     <div id="sharePanel" class="hidden">
-      <label>Your pairing code</label><input id="activeCode" class="code" readonly />
+      <label>Your pairing code</label><input id="activeCode" class="code" readonly>
       <button id="copyCode" class="secondary">Copy code</button>
       <button id="shareLocation">Start sharing my location</button>
       <button id="stopSharing" class="secondary hidden">Stop sharing</button>
@@ -47,41 +32,27 @@
     <p class="tiny">Location is shared only with the person using your pairing code. You can stop sharing at any time.</p>
   </section>
 </main>
-
-<dialog id="configDialog">
-  <h2>Firebase setup</h2>
-  <p>Paste the web app configuration object from Firebase Project Settings. It is stored only on this device.</p>
-  <textarea id="firebaseConfig" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'></textarea>
-  <div class="row"><button id="saveConfig">Save</button><button id="cancelConfig" class="secondary">Cancel</button></div>
-</dialog>
-
 <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
-  import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
-  import { getFirestore, collection, doc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
-  const $ = (id) => document.getElementById(id);
-  const state = { db:null, auth:null, uid:null, code:localStorage.getItem('closerCode'), watchId:null, unsub:null, me:null, partner:null };
-  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const randomCode=()=>Array.from({length:6},()=>alphabet[Math.floor(Math.random()*alphabet.length)]).join('');
-  const setStatus=(text)=>$('status').textContent=text;
-  const show=(id,yes=true)=>$(id).classList.toggle('hidden',!yes);
-  const miles=(a,b)=>{const r=3958.7613,toRad=n=>n*Math.PI/180,dLat=toRad(b.lat-a.lat),dLon=toRad(b.lng-a.lng),x=Math.sin(dLat/2)**2+Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLon/2)**2;return 2*r*Math.asin(Math.sqrt(x));};
-  function renderDistance(){if(!state.me||!state.partner)return;const d=miles(state.me,state.partner);$('distance').textContent=d<0.1?`${Math.round(d*5280)} ft`:d<10?`${d.toFixed(1)}`:`${Math.round(d)}`;$('unit').textContent=d<0.1?'apart':'miles apart';show('distancePanel');setStatus(`${state.partner.name||'Your love'} was updated recently.`);}
-  function setPairUI(){show('setupPanel',false);show('pairPanel',!state.code);show('sharePanel',!!state.code);if(state.code){$('activeCode').value=state.code;subscribePair();}}
-  async function initFirebase(config){const app=initializeApp(config);state.auth=getAuth(app);state.db=getFirestore(app);const cred=await signInAnonymously(state.auth);state.uid=cred.user.uid;setStatus('Ready to pair.');setPairUI();}
-  async function boot(){const saved=localStorage.getItem('closerFirebase');if(saved){try{await initFirebase(JSON.parse(saved));}catch(e){console.error(e);setStatus('Firebase setup needs attention. Open configuration and try again.');}}}
-  function subscribePair(){state.unsub?.();const members=collection(state.db,'pairs',state.code,'members');state.unsub=onSnapshot(members,snap=>{state.partner=null;snap.forEach(s=>{const d=s.data();if(s.id===state.uid)state.me=d.location?{...d.location,name:d.name}:state.me;else if(d.location)state.partner={...d.location,name:d.name};});if(state.partner)renderDistance();else setStatus('Share this code with your love, then both start location sharing.');});}
-  async function activate(code){state.code=code.toUpperCase();localStorage.setItem('closerCode',state.code);await setDoc(doc(state.db,'pairs',state.code,'members',state.uid),{name:$('name').value.trim()||'My love',joinedAt:serverTimestamp()},{merge:true});setPairUI();}
-  $('configure').onclick=()=>$('configDialog').showModal();$('cancelConfig').onclick=()=>$('configDialog').close();
-  $('saveConfig').onclick=async()=>{try{const config=JSON.parse($('firebaseConfig').value);localStorage.setItem('closerFirebase',JSON.stringify(config));$('configDialog').close();await initFirebase(config);}catch(e){alert('That configuration is not valid JSON, or Firebase could not connect.');}};
-  $('createPair').onclick=()=>activate(randomCode());$('joinPair').onclick=()=>{const c=$('pairCode').value.trim().toUpperCase();if(c.length!==6)return alert('Enter the six-character code.');activate(c);};
-  $('copyCode').onclick=async()=>{await navigator.clipboard.writeText(state.code);setStatus('Pairing code copied.');};
-  $('shareLocation').onclick=()=>{if(!navigator.geolocation)return alert('Location is not supported on this device.');$('shareLocation').disabled=true;state.watchId=navigator.geolocation.watchPosition(async pos=>{const location={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,updatedAt:Date.now()};state.me={...location,name:$('name').value.trim()||'Me'};await setDoc(doc(state.db,'pairs',state.code,'members',state.uid),{name:state.me.name,location,lastSeen:serverTimestamp()},{merge:true});renderDistance();show('stopSharing');setStatus(state.partner?'Locations connected.':'Your location is live. Waiting for your love.');},err=>{console.error(err);setStatus('Location permission is required.');$('shareLocation').disabled=false;},{enableHighAccuracy:true,maximumAge:15000,timeout:20000});};
-  $('stopSharing').onclick=()=>{if(state.watchId!==null)navigator.geolocation.clearWatch(state.watchId);state.watchId=null;$('shareLocation').disabled=false;show('stopSharing',false);setStatus('Location sharing stopped.');};
-  $('demo').onclick=()=>{show('setupPanel',false);show('distancePanel');$('distance').textContent='4.2';$('unit').textContent='miles apart';setStatus('Demo preview — connect Firebase for live sharing.');};
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-  boot();
+const firebaseConfig={apiKey:'AIzaSyBZ_CPIfBDDs1hAAP60qONMiuORWtTzk_Q',authDomain:'closer-d8e1f.firebaseapp.com',projectId:'closer-d8e1f',storageBucket:'closer-d8e1f.firebasestorage.app',messagingSenderId:'944773595849',appId:'1:944773595849:web:e3d759d7e2c7126b57c318',measurementId:'G-S6735S8T15'};
+const $=id=>document.getElementById(id),show=(id,on=true)=>$(id).classList.toggle('hidden',!on),setStatus=t=>$('status').textContent=t;
+const state={db:null,uid:null,code:localStorage.getItem('closerCode'),watchId:null,unsub:null,me:null,partner:null};
+const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',randomCode=()=>Array.from({length:6},()=>alphabet[Math.floor(Math.random()*alphabet.length)]).join('');
+const miles=(a,b)=>{const r=3958.7613,toRad=n=>n*Math.PI/180,dLat=toRad(b.lat-a.lat),dLon=toRad(b.lng-a.lng),x=Math.sin(dLat/2)**2+Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLon/2)**2;return 2*r*Math.asin(Math.sqrt(x));};
+function renderDistance(){if(!state.me||!state.partner)return;const d=miles(state.me,state.partner);$('distance').textContent=d<0.1?`${Math.round(d*5280)} ft`:d<10?d.toFixed(1):Math.round(d);$('unit').textContent=d<0.1?'apart':'miles apart';show('distancePanel');setStatus(`${state.partner.name||'Your love'} is connected.`)}
+function setPairUI(){show('pairPanel',!state.code);show('sharePanel',!!state.code);if(state.code){$('activeCode').value=state.code;subscribePair()}}
+function subscribePair(){state.unsub?.();state.unsub=onSnapshot(collection(state.db,'pairs',state.code,'members'),snap=>{state.partner=null;snap.forEach(s=>{const d=s.data();if(s.id===state.uid&&d.location)state.me={...d.location,name:d.name};else if(s.id!==state.uid&&d.location)state.partner={...d.location,name:d.name}});if(state.partner)renderDistance();else setStatus('Share this code with your love, then both start location sharing.')},e=>{console.error(e);setStatus('Firestore is not ready yet. Enable it in Firebase, then refresh.')})}
+async function activate(code){state.code=code.toUpperCase();localStorage.setItem('closerCode',state.code);await setDoc(doc(state.db,'pairs',state.code,'members',state.uid),{name:$('name').value.trim()||'My love',joinedAt:serverTimestamp()},{merge:true});setPairUI()}
+$('createPair').onclick=()=>activate(randomCode());
+$('joinPair').onclick=()=>{const c=$('pairCode').value.trim().toUpperCase();if(c.length!==6)return alert('Enter the six-character code.');activate(c)};
+$('copyCode').onclick=async()=>{await navigator.clipboard.writeText(state.code);setStatus('Pairing code copied.')};
+$('shareLocation').onclick=()=>{if(!navigator.geolocation)return alert('Location is not supported on this device.');$('shareLocation').disabled=true;state.watchId=navigator.geolocation.watchPosition(async pos=>{const location={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,updatedAt:Date.now()};state.me={...location,name:$('name').value.trim()||'Me'};await setDoc(doc(state.db,'pairs',state.code,'members',state.uid),{name:state.me.name,location,lastSeen:serverTimestamp()},{merge:true});renderDistance();show('stopSharing');setStatus(state.partner?'Locations connected.':'Your location is live. Waiting for your love.')},()=>{setStatus('Location permission is required.');$('shareLocation').disabled=false},{enableHighAccuracy:true,maximumAge:15000,timeout:20000})};
+$('stopSharing').onclick=()=>{if(state.watchId!==null)navigator.geolocation.clearWatch(state.watchId);state.watchId=null;$('shareLocation').disabled=false;show('stopSharing',false);setStatus('Location sharing stopped.')};
+try{const app=initializeApp(firebaseConfig),auth=getAuth(app);state.db=getFirestore(app);const cred=await signInAnonymously(auth);state.uid=cred.user.uid;setStatus('Ready to pair.');setPairUI()}catch(e){console.error(e);setStatus(e?.code==='auth/configuration-not-found'?'Enable Anonymous sign-in in Firebase, then refresh.':'Firebase setup needs attention. Check Authentication and Firestore.')}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
 </html>
