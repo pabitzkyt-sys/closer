@@ -1,63 +1,53 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#17131f">
-  <meta name="description" content="See how far away your favorite person is.">
-  <link rel="manifest" href="manifest.webmanifest">
-  <title>Closer</title>
-  <style>
-    :root{font-family:Inter,ui-rounded,system-ui,-apple-system,sans-serif;color:#fff;background:#17131f;color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#663d70 0,#281d34 34%,#17131f 70%);display:grid;place-items:center;padding:24px}main{width:min(100%,460px)}.brand{text-align:center;margin-bottom:28px}.heart{font-size:36px}.brand h1{font-size:42px;letter-spacing:-2px;margin:4px 0}.brand p{margin:0;color:#c7bcd1}.card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 70px rgba(0,0,0,.35);backdrop-filter:blur(18px);border-radius:28px;padding:24px}.distance{text-align:center;padding:18px 0 28px}.distance strong{display:block;font-size:64px;line-height:1;letter-spacing:-4px}.distance span{color:#d4c6df;font-size:18px}.status{text-align:center;color:#bbaac7;min-height:48px;margin:8px 0 20px}label{display:block;color:#d6cadd;font-size:14px;margin:14px 0 7px}input{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2);color:white;border-radius:16px;padding:14px;font:inherit;outline:none}input:focus{border-color:#c789db}button{width:100%;border:0;border-radius:16px;padding:14px 18px;font:700 16px inherit;cursor:pointer;margin-top:12px;background:#f4d3ff;color:#291b30}button.secondary{background:rgba(255,255,255,.1);color:#fff}button:disabled{opacity:.55;cursor:not-allowed}.code{font-size:28px;text-align:center;letter-spacing:6px;text-transform:uppercase}.tiny{font-size:12px;color:#a999b4;text-align:center;margin-top:16px}.hidden{display:none!important}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080b18">
+<link rel="manifest" href="manifest.webmanifest">
+<title>VOID RUNNER</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;height:100%;overflow:hidden;background:#080b18;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;touch-action:none}body{display:grid;place-items:center}.wrap{position:relative;width:100%;height:100%;max-width:560px;overflow:hidden;background:radial-gradient(circle at 50% 20%,#171c46 0,#0a0d20 45%,#050711 100%)}canvas{position:absolute;inset:0;width:100%;height:100%}.hud{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;display:flex;justify-content:space-between;gap:12px;z-index:3;pointer-events:none}.pill{background:#0b1028cc;border:1px solid #7df9ff55;border-radius:999px;padding:8px 13px;font-weight:800;letter-spacing:.04em;box-shadow:0 0 20px #00e5ff22}.center{position:absolute;inset:0;display:grid;place-items:center;z-index:4;padding:26px;background:#05071188;backdrop-filter:blur(4px)}.card{width:min(100%,390px);text-align:center;padding:28px 24px;border-radius:28px;background:linear-gradient(180deg,#12183be8,#080c20f5);border:1px solid #82f7ff55;box-shadow:0 24px 80px #0008,0 0 42px #6b5cff22}h1{margin:0;font-size:clamp(38px,10vw,64px);line-height:.9;letter-spacing:-.06em;background:linear-gradient(135deg,#fff,#77f7ff 45%,#c980ff 85%);-webkit-background-clip:text;color:transparent;text-shadow:0 0 40px #71edff22}p{color:#b9c5ed;line-height:1.45;margin:16px 0 22px}.best{font-weight:800;color:#fff;margin-bottom:18px}button{appearance:none;border:0;border-radius:18px;padding:16px 22px;width:100%;font-size:18px;font-weight:900;letter-spacing:.05em;color:#09101b;background:linear-gradient(135deg,#77f7ff,#be89ff);box-shadow:0 10px 30px #65e9ff33;cursor:pointer}.tiny{font-size:12px;color:#7180ad;margin-top:14px}.hidden{display:none}.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}.toast{position:absolute;top:26%;left:50%;transform:translate(-50%,-50%) scale(.8);font-size:26px;font-weight:1000;letter-spacing:.04em;opacity:0;z-index:3;pointer-events:none;text-shadow:0 0 20px currentColor;white-space:nowrap}.controls{position:absolute;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#8291c2;font-size:12px;letter-spacing:.08em;z-index:2;pointer-events:none}
+</style>
 </head>
 <body>
-<main>
-  <div class="brand"><div class="heart">♥</div><h1>Closer</h1><p>Distance from my love</p></div>
-  <section class="card">
-    <div id="distancePanel" class="distance hidden"><strong id="distance">—</strong><span id="unit">miles apart</span></div>
-    <div id="status" class="status">Connecting securely…</div>
-    <div id="pairPanel" class="hidden">
-      <label for="name">Your name</label><input id="name" maxlength="30" placeholder="Your name">
-      <button id="createPair">Create a pair</button>
-      <label for="pairCode">Or enter your partner's code</label><input id="pairCode" class="code" maxlength="6" placeholder="ABC123">
-      <button id="joinPair" class="secondary">Join pair</button>
-    </div>
-    <div id="sharePanel" class="hidden">
-      <label>Your pairing code</label><input id="activeCode" class="code" readonly>
-      <button id="copyCode" class="secondary">Copy code</button>
-      <button id="shareLocation">Start sharing my location</button>
-      <button id="retry" class="secondary">Retry connection</button>
-      <button id="resetPair" class="secondary">Leave this pair</button>
-      <button id="stopSharing" class="secondary hidden">Stop sharing</button>
-    </div>
-    <p class="tiny">Location is shared only with the person using your pairing code. You can stop sharing at any time.</p>
-  </section>
-</main>
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
-import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
-import { getFirestore, collection, doc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
-
-const firebaseConfig={apiKey:'AIzaSyBZ_CPIfBDDs1hAAP60qONMiuORWtTzk_Q',authDomain:'closer-d8e1f.firebaseapp.com',projectId:'closer-d8e1f',storageBucket:'closer-d8e1f.firebasestorage.app',messagingSenderId:'944773595849',appId:'1:944773595849:web:e3d759d7e2c7126b57c318',measurementId:'G-S6735S8T15'};
-const $=id=>document.getElementById(id),show=(id,on=true)=>$(id).classList.toggle('hidden',!on),setStatus=t=>$('status').textContent=t;
-const state={db:null,uid:null,code:localStorage.getItem('closerCode'),watchId:null,unsub:null,me:null,partner:null};
-const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',randomCode=()=>Array.from({length:6},()=>alphabet[Math.floor(Math.random()*alphabet.length)]).join('');
-const miles=(a,b)=>{const r=3958.7613,toRad=n=>n*Math.PI/180,dLat=toRad(b.lat-a.lat),dLon=toRad(b.lng-a.lng),x=Math.sin(dLat/2)**2+Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLon/2)**2;return 2*r*Math.asin(Math.sqrt(x));};
-function renderDistance(){if(!state.me||!state.partner)return;const d=miles(state.me,state.partner);$('distance').textContent=d<0.1?`${Math.round(d*5280)} ft`:d<10?d.toFixed(1):Math.round(d);$('unit').textContent=d<0.1?'apart':'miles apart';show('distancePanel');setStatus(`${state.partner.name||'Your love'} is connected.`)}
-function setPairUI(){show('pairPanel',!state.code);show('sharePanel',!!state.code);if(state.code){$('activeCode').value=state.code;subscribePair()}}
-function explainError(e){const code=e?.code||'unknown';console.error(e);if(code==='permission-denied')return 'Permission denied. Recheck and publish the Firestore rules.';if(code==='failed-precondition')return 'Firestore is still provisioning or the wrong database was selected.';if(code==='unavailable')return 'Firestore is temporarily unavailable. Check your connection and retry.';return `Firebase error: ${code}.`;}
-function subscribePair(){if(!state.db||!state.code)return;state.unsub?.();setStatus('Connecting to your pair…');state.unsub=onSnapshot(collection(state.db,'pairs',state.code,'members'),snap=>{state.partner=null;snap.forEach(s=>{const d=s.data();if(s.id===state.uid&&d.location)state.me={...d.location,name:d.name};else if(s.id!==state.uid&&d.location)state.partner={...d.location,name:d.name}});if(state.partner)renderDistance();else setStatus('Share this code with your love, then both start location sharing.')},e=>setStatus(explainError(e)))}
-async function activate(code){try{state.code=code.toUpperCase();await setDoc(doc(state.db,'pairs',state.code,'members',state.uid),{name:$('name').value.trim()||'My love',joinedAt:serverTimestamp()},{merge:true});localStorage.setItem('closerCode',state.code);setPairUI()}catch(e){state.code=null;setStatus(explainError(e))}}
-$('createPair').onclick=()=>activate(randomCode());
-$('joinPair').onclick=()=>{const c=$('pairCode').value.trim().toUpperCase();if(c.length!==6)return alert('Enter the six-character code.');activate(c)};
-$('copyCode').onclick=async()=>{await navigator.clipboard.writeText(state.code);setStatus('Pairing code copied.')};
-$('retry').onclick=()=>subscribePair();
-$('resetPair').onclick=()=>{state.unsub?.();localStorage.removeItem('closerCode');state.code=null;state.me=null;state.partner=null;show('distancePanel',false);setPairUI();setStatus('Ready to pair.')};
-$('shareLocation').onclick=()=>{if(!navigator.geolocation)return alert('Location is not supported on this device.');$('shareLocation').disabled=true;state.watchId=navigator.geolocation.watchPosition(async pos=>{try{const location={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,updatedAt:Date.now()};state.me={...location,name:'Me'};await setDoc(doc(state.db,'pairs',state.code,'members',state.uid),{name:state.me.name,location,lastSeen:serverTimestamp()},{merge:true});renderDistance();show('stopSharing');setStatus(state.partner?'Locations connected.':'Your location is live. Waiting for your love.')}catch(e){setStatus(explainError(e));$('shareLocation').disabled=false}},()=>{setStatus('Location permission is required.');$('shareLocation').disabled=false},{enableHighAccuracy:true,maximumAge:15000,timeout:20000})};
-$('stopSharing').onclick=()=>{if(state.watchId!==null)navigator.geolocation.clearWatch(state.watchId);state.watchId=null;$('shareLocation').disabled=false;show('stopSharing',false);setStatus('Location sharing stopped.')};
-try{const app=initializeApp(firebaseConfig),auth=getAuth(app);state.db=getFirestore(app);const cred=await signInAnonymously(auth);state.uid=cred.user.uid;setStatus('Ready to pair.');setPairUI()}catch(e){setStatus(explainError(e))}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
+<div class="wrap">
+<canvas id="game"></canvas>
+<div class="hud"><div class="pill">SCORE <span id="score">0</span></div><div class="pill">BEST <span id="bestHud">0</span></div></div>
+<div class="toast" id="toast">NICE!</div><div class="flash" id="flash"></div>
+<div class="controls">DRAG ANYWHERE TO STEER</div>
+<div class="center" id="start">
+ <div class="card"><h1>VOID<br>RUNNER</h1><p>Steer the little ship through the chaos. Dodge the red stuff. Grab glowing cores. It gets ridiculous fast.</p><div class="best">HIGH SCORE: <span id="best">0</span></div><button id="go">LAUNCH</button><div class="tiny">One thumb. No instructions. Good luck.</div></div>
+</div>
+<div class="center hidden" id="over">
+ <div class="card"><h1>BOOM.</h1><p>You lasted <b><span id="seconds">0.0</span>s</b> and scored <b><span id="final">0</span></b>.</p><div class="best" id="record"></div><button id="again">RUN IT BACK</button><div class="tiny">Your high score stays on this phone.</div></div>
+</div>
+</div>
+<script>
+const c=document.querySelector('#game'),x=c.getContext('2d'),scoreEl=document.querySelector('#score'),bestEl=document.querySelector('#best'),bestHud=document.querySelector('#bestHud'),start=document.querySelector('#start'),over=document.querySelector('#over'),toast=document.querySelector('#toast'),flash=document.querySelector('#flash');
+let W,H,dpr,player,things=[],particles=[],running=false,last=0,time=0,score=0,spawn=0,coreSpawn=0,shake=0,combo=0;
+let best=+(localStorage.voidRunnerBest||0);bestEl.textContent=best;bestHud.textContent=best;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth>560?560:innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+function reset(){player={x:W/2,y:H*.78,r:14,target:W/2};things=[];particles=[];time=0;score=0;spawn=0;coreSpawn=0;shake=0;combo=0;scoreEl.textContent=0}
+function launch(){reset();start.classList.add('hidden');over.classList.add('hidden');running=true;last=performance.now();requestAnimationFrame(loop)}
+document.querySelector('#go').onclick=launch;document.querySelector('#again').onclick=launch;
+function aim(e){if(!running)return;let p=e.touches?e.touches[0]:e;let r=c.getBoundingClientRect();player.target=Math.max(20,Math.min(W-20,p.clientX-r.left))}addEventListener('pointermove',aim,{passive:true});addEventListener('pointerdown',aim,{passive:true});addEventListener('touchmove',aim,{passive:true});
+function addEnemy(){let r=10+Math.random()*18;things.push({kind:'bad',x:r+Math.random()*(W-r*2),y:-30,r,vy:150+Math.random()*80+time*5,spin:Math.random()*6,a:Math.random()*6})}
+function addCore(){things.push({kind:'core',x:25+Math.random()*(W-50),y:-25,r:10,vy:125+time*2,a:0})}
+function burst(px,py,color,n=15){for(let i=0;i<n;i++){let a=Math.random()*Math.PI*2,s=40+Math.random()*190;particles.push({x:px,y:py,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.35+Math.random()*.45,max:.8,color,size:2+Math.random()*4})}}
+function say(t,color='#77f7ff'){toast.textContent=t;toast.style.color=color;toast.animate([{opacity:0,transform:'translate(-50%,-50%) scale(.7)'},{opacity:1,transform:'translate(-50%,-50%) scale(1.1)'},{opacity:0,transform:'translate(-50%,-65%) scale(1)'}],{duration:700})}
+function die(){running=false;shake=15;burst(player.x,player.y,'#ff4b6e',45);flash.animate([{opacity:.7},{opacity:0}],{duration:320});draw();let final=Math.floor(score);if(final>best){best=final;localStorage.voidRunnerBest=best;bestHud.textContent=best;bestEl.textContent=best;document.querySelector('#record').textContent='NEW HIGH SCORE ✨'}else document.querySelector('#record').textContent='HIGH SCORE: '+best;document.querySelector('#final').textContent=final;document.querySelector('#seconds').textContent=time.toFixed(1);setTimeout(()=>over.classList.remove('hidden'),320);if(navigator.vibrate)navigator.vibrate([45,35,100])}
+function update(dt){time+=dt;score+=dt*10*(1+combo*.08);scoreEl.textContent=Math.floor(score);player.x+=(player.target-player.x)*Math.min(1,dt*10);spawn-=dt;coreSpawn-=dt;if(spawn<=0){addEnemy();spawn=Math.max(.18,.72-time*.012)*(0.68+Math.random()*.65)}if(coreSpawn<=0){addCore();coreSpawn=1.3+Math.random()*1.8}
+ for(let i=things.length-1;i>=0;i--){let o=things[i];o.y+=o.vy*dt;o.a+=dt*3;if(o.y>H+50){things.splice(i,1);continue}let dx=o.x-player.x,dy=o.y-player.y,rr=o.r+player.r;if(dx*dx+dy*dy<rr*rr){if(o.kind==='bad'){die();return}else{things.splice(i,1);combo=Math.min(combo+1,12);score+=100+combo*25;burst(o.x,o.y,'#77f7ff',20);say(combo>4?'COMBO ×'+combo:'+'+(100+combo*25));if(navigator.vibrate)navigator.vibrate(18)}}}
+ for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.life-=dt;if(p.life<=0){particles.splice(i,1);continue}p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98}
+}
+function starfield(){x.fillStyle='#080b18';x.fillRect(0,0,W,H);for(let i=0;i<70;i++){let sy=(i*83+time*55*(1+(i%4)) )%H,sx=(i*137)%W,sz=1+(i%3)*.5;x.globalAlpha=.25+(i%5)*.1;x.fillStyle='#c7d4ff';x.fillRect(sx,sy,sz,sz)}x.globalAlpha=1}
+function draw(){x.save();if(shake){x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.88}starfield();
+ for(let o of things){if(o.kind==='bad'){x.save();x.translate(o.x,o.y);x.rotate(o.a);x.shadowBlur=18;x.shadowColor='#ff315c';x.fillStyle='#ff315c';x.beginPath();for(let j=0;j<8;j++){let a=j*Math.PI/4,rad=o.r*(j%2?0.72:1);let px=Math.cos(a)*rad,py=Math.sin(a)*rad;j?x.lineTo(px,py):x.moveTo(px,py)}x.closePath();x.fill();x.restore()}else{x.save();x.translate(o.x,o.y);x.rotate(o.a);x.shadowBlur=24;x.shadowColor='#77f7ff';x.strokeStyle='#77f7ff';x.lineWidth=3;x.beginPath();x.arc(0,0,o.r,0,Math.PI*2);x.stroke();x.fillStyle='#fff';x.beginPath();x.arc(0,0,3.5,0,Math.PI*2);x.fill();x.restore()}}
+ for(let p of particles){x.globalAlpha=Math.max(0,p.life/p.max);x.fillStyle=p.color;x.fillRect(p.x,p.y,p.size,p.size)}x.globalAlpha=1;
+ if(player){x.save();x.translate(player.x,player.y);x.shadowBlur=26;x.shadowColor='#a878ff';x.fillStyle='#b58cff';x.beginPath();x.moveTo(0,-18);x.lineTo(14,13);x.lineTo(0,8);x.lineTo(-14,13);x.closePath();x.fill();x.fillStyle='#77f7ff';x.beginPath();x.moveTo(-5,10);x.lineTo(0,23+Math.random()*8);x.lineTo(5,10);x.fill();x.restore()}x.restore()}
+function loop(now){if(!running)return;let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);draw();if(running)requestAnimationFrame(loop)}
+reset();draw();
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
-</body>
-</html>
+</body></html>
