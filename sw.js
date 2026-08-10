@@ -1,4 +1,4 @@
-const BALANCE_TAG='<script src="./balance.js?v=9"></script>';
+const BALANCE_TAG='<script src="./balance.js?v=10"></script>';
 const ENEMY_TAG='<script src="./enemy-visuals.js?v=8"></script>';
 self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
@@ -17,7 +17,7 @@ self.addEventListener('fetch',event=>{
       if(!type.includes('text/html')) return res;
       let html=await res.text();
       let tags='';
-      if(!html.includes('balance.js?v=9')) tags+=BALANCE_TAG;
+      if(!html.includes('balance.js?v=10')) tags+=BALANCE_TAG;
       if(!html.includes('enemy-visuals.js?v=8')) tags+=ENEMY_TAG;
       if(tags) html=html.replace('</body>',tags+'</body>');
       return new Response(html,{status:res.status,statusText:res.statusText,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}});
