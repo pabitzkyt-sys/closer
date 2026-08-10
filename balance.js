@@ -1,4 +1,4 @@
-// VOID RUNNER rebalance v7
+// VOID RUNNER rebalance v7.1
 // Loaded after the main game script by the service worker.
 (() => {
   const SCORE_SCALE = 0.55;
@@ -6,7 +6,6 @@
   const FIRST_POWER_SCORE = 250;
   const POWER_STEP = 450;
   let nextPowerScore = FIRST_POWER_SCORE;
-  let enemyAddedThisFrame = false;
 
   const originalReset = reset;
   reset = function(){
@@ -15,23 +14,8 @@
     powerSpawn = 1e9;
   };
 
-  addEnemy = function(){
-    if(enemyAddedThisFrame) return;
-    enemyAddedThisFrame = true;
-    const r = 10 + Math.random()*18;
-    things.push({
-      kind:'bad',
-      x:r + Math.random()*(W-r*2),
-      y:-30,
-      r,
-      vy:145 + Math.random()*75 + time*6.2,
-      a:Math.random()*6
-    });
-  };
-
   const originalUpdate = update;
   update = function(dt){
-    enemyAddedThisFrame = false;
     powerSpawn = 1e9;
 
     let misses = 0;
@@ -42,6 +26,10 @@
       }
     }
 
+    // Remember whether the normal spawn timer is about to fire this frame.
+    // Only clamp the NEW timer after a spawn; never keep resetting an active
+    // countdown or enemies will stop appearing after the first one.
+    const spawningThisFrame = spawn - dt <= 0;
     const before = score;
     originalUpdate(dt);
 
@@ -55,10 +43,11 @@
       if(navigator.vibrate) navigator.vibrate(12);
     }
 
-    // Slow the ramp from the previous build. Never let the next normal spawn
-    // become faster than this floor; difficulty still rises steadily.
-    const spawnFloor = Math.max(.16, .66 - time * .0095);
-    if(spawn < spawnFloor) spawn = spawnFloor;
+    // Slow the ramp while allowing the timer to count down normally.
+    if(spawningThisFrame){
+      const spawnFloor = Math.max(.16, .66 - time * .0095);
+      if(spawn < spawnFloor) spawn = spawnFloor;
+    }
 
     // Weapon drops are earned by score milestones rather than elapsed time.
     if(score >= nextPowerScore && !things.some(o => o.kind === 'power')){
