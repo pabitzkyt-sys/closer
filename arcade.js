@@ -1,4 +1,4 @@
-// VOID RUNNER arcade expansion v14
+// VOID RUNNER arcade expansion v15
 (() => {
   const oldReset=reset, oldUpdate=update, oldDraw=draw, oldAddEnemy=addEnemy, oldAddPower=addPower, oldDie=die;
   let level=1,boss=null,nextBoss=2500,bossKills=0,bossCooldown=0,nearMisses=0,shield=0,slow=0,mult=1,multLeft=0,waveClock=5,lastKills=0,coins=0,reviving=false,coinTimer=1.5;
@@ -41,7 +41,8 @@
     if(type==='slow'){slow=10;say('SLOW TIME 10s','#b58cff');return}
     if(type==='mult'){mult=2;multLeft=10;say('2X SCORE 10s','#ffe47a');return}
     if(type==='bomb'){let n=0;for(let i=things.length-1;i>=0;i--)if(things[i].kind==='bad'){burst(things[i].x,things[i].y,'#fff',12);things.splice(i,1);n++}score+=n*25;say('VOID BOMB!','#fff');return}
-    powerType=type;powerLeft=10;powerName.textContent=POWER_INFO[type].name;powerTime.textContent='10.0';powerHud.style.color=POWER_INFO[type].color;powerHud.classList.add('on');say(POWER_INFO[type].name+'!','#fff')
+    if(!type)return;
+    powerType=type;powerLeft=10;powerName.textContent=POWER_INFO[type]?.name||'POWER';powerTime.textContent='10.0';powerHud.style.color=POWER_INFO[type]?.color||'#fff';powerHud.classList.add('on');say((POWER_INFO[type]?.name||'POWER')+'!','#fff')
   };
 
   const oldShoot=shoot;
@@ -59,6 +60,7 @@
     coinTimer-=dt;
     if(coinTimer<=0&&!boss){spawnCoin();coinTimer=2.0+Math.random()*1.8}
 
+    // Handle coins entirely outside the legacy game loop.
     for(let i=things.length-1;i>=0;i--){
       const o=things[i];
       if(o.kind==='coin'){
@@ -69,8 +71,12 @@
       }
     }
 
+    const coinObjects=things.filter(o=>o.kind==='coin');
+    things=things.filter(o=>o.kind!=='coin');
     const preScore=score;
-    oldUpdate(dt); if(!running)return;
+    oldUpdate(dt);
+    things.push(...coinObjects.filter(o=>o.y<=H+35));
+    if(!running)return;
     coreSpawn=1e9;
 
     for(const o of things)if(o.kind==='bad'){
@@ -94,8 +100,11 @@
   };
 
   draw=function(){
+    const coinObjects=things.filter(o=>o.kind==='coin');
+    things=things.filter(o=>o.kind!=='coin');
     oldDraw();
-    for(const o of things)if(o.kind==='coin'){
+    things.push(...coinObjects);
+    for(const o of coinObjects){
       x.save();x.translate(o.x,o.y);x.rotate(Math.sin(o.a)*.25);x.shadowBlur=20;x.shadowColor='#ffd95a';x.fillStyle='#f6b92b';x.strokeStyle='#fff1a6';x.lineWidth=2;x.beginPath();x.ellipse(0,0,o.r,o.r*.82,0,0,Math.PI*2);x.fill();x.stroke();x.strokeStyle='#b97500';x.lineWidth=2;x.beginPath();x.ellipse(0,0,o.r*.62,o.r*.52,0,0,Math.PI*2);x.stroke();x.fillStyle='#7a4b00';x.font='900 13px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText('$',0,1);x.restore()
     }
     if(boss){x.save();x.translate(boss.x,boss.y);x.shadowBlur=30;x.shadowColor='#ff315c';x.strokeStyle='#ff6b82';x.fillStyle='#32102a';x.lineWidth=4;x.beginPath();for(let i=0;i<12;i++){let a=i*Math.PI/6,r=boss.r*(i%2?0.72:1);i?x.lineTo(Math.cos(a)*r,Math.sin(a)*r):x.moveTo(Math.cos(a)*r,Math.sin(a)*r)}x.closePath();x.fill();x.stroke();x.restore();x.fillStyle='#30111b';x.fillRect(30,112,W-60,9);x.fillStyle='#ff5475';x.fillRect(30,112,(W-60)*boss.hp/boss.maxHp,9)}
