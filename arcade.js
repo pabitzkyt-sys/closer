@@ -1,11 +1,30 @@
-// VOID RUNNER arcade expansion v11.1
+// VOID RUNNER arcade expansion v13
 (() => {
-  const oldReset=reset, oldUpdate=update, oldDraw=draw, oldAddEnemy=addEnemy, oldAddPower=addPower;
-  let level=1,boss=null,nextBoss=2500,bossKills=0,bossCooldown=0,nearMisses=0,shield=0,slow=0,mult=1,multLeft=0,waveClock=5,lastKills=0;
+  const oldReset=reset, oldUpdate=update, oldDraw=draw, oldAddEnemy=addEnemy, oldAddPower=addPower, oldAddCore=addCore, oldDie=die;
+  let level=1,boss=null,nextBoss=2500,bossKills=0,bossCooldown=0,nearMisses=0,shield=0,slow=0,mult=1,multLeft=0,waveClock=5,lastKills=0,coins=0,reviving=false;
   const extraPowers=['pierce','shield','slow','mult','bomb'];
   Object.assign(POWER_INFO,{pierce:{name:'PIERCING',color:'#7ab8ff'},shield:{name:'SHIELD',color:'#72a7ff'},slow:{name:'SLOW TIME',color:'#b58cff'},mult:{name:'2X SCORE',color:'#ffe47a'},bomb:{name:'VOID BOMB',color:'#ffffff'}});
+
+  const hud=document.querySelector('.hud');
+  const coinPill=document.createElement('div');
+  coinPill.className='pill';coinPill.innerHTML='COINS 🪙 <span id="coinCount">0</span>';
+  hud.insertBefore(coinPill,hud.children[2]||null);
+  const coinEl=coinPill.querySelector('#coinCount');
+
+  const overCard=over.querySelector('.card');
+  const reviveBtn=document.createElement('button');
+  reviveBtn.id='reviveBtn';reviveBtn.style.marginTop='10px';reviveBtn.style.background='linear-gradient(135deg,#ffe47a,#ff9f43)';reviveBtn.textContent='REVIVE';
+  const againBtn=document.querySelector('#again');
+  overCard.insertBefore(reviveBtn,againBtn);
+
   function levelSpeed(){return 1+(level-1)*.16}
-  reset=function(){oldReset();level=1;boss=null;nextBoss=2500;bossKills=0;bossCooldown=0;nearMisses=0;shield=0;slow=0;mult=1;multLeft=0;waveClock=5;lastKills=0};
+  function reviveCost(){return 10*level}
+  function updateCoins(){coinEl.textContent=coins;reviveBtn.textContent=`REVIVE • ${reviveCost()} 🪙`;reviveBtn.disabled=coins<reviveCost();reviveBtn.style.opacity=coins<reviveCost()?'.45':'1'}
+
+  reset=function(){oldReset();level=1;boss=null;nextBoss=2500;bossKills=0;bossCooldown=0;nearMisses=0;shield=0;slow=0;mult=1;multLeft=0;waveClock=5;lastKills=0;coins=0;reviving=false;updateCoins()};
+
+  addCore=function(){things.push({kind:'core',isCoin:true,x:25+Math.random()*(W-50),y:-25,r:11,vy:120,a:0})};
+
   addEnemy=function(){
     oldAddEnemy(); const o=things[things.length-1]; if(!o||o.kind!=='bad')return;
     o.vy=(145+Math.random()*65)*levelSpeed(); o.baseX=o.x;o.t=0;o.hp=1;o.maxHp=1;
@@ -16,9 +35,11 @@
     else if(level>=3&&r<.60){o.beh='armor';o.hp=o.maxHp=3;o.r*=1.18;o.color='#ffd166'}
     else o.beh='normal';
   };
+
   addPower=function(){
     const all=['spread','twin','rapid',...extraPowers];let type=all[Math.floor(Math.random()*all.length)];things.push({kind:'power',type,x:30+Math.random()*(W-60),y:-30,r:14,vy:110,a:0})
   };
+
   const oldActivate=activatePower;
   activatePower=function(type){
     if(['spread','twin','rapid'].includes(type)){oldActivate(type);return}
@@ -28,16 +49,50 @@
     if(type==='bomb'){let n=0;for(let i=things.length-1;i>=0;i--)if(things[i].kind==='bad'){burst(things[i].x,things[i].y,'#fff',12);things.splice(i,1);n++}score+=n*25;say('VOID BOMB!','#fff');return}
     powerType=type;powerLeft=10;powerName.textContent=POWER_INFO[type].name;powerTime.textContent='10.0';powerHud.style.color=POWER_INFO[type].color;powerHud.classList.add('on');say(POWER_INFO[type].name+'!','#fff')
   };
+
   const oldShoot=shoot;
   shoot=function(){
     if(powerType==='pierce'){shots.push({x:player.x,y:player.y-20,vx:0,vy:-700,r:5,color:'#7ab8ff',pierce:true});return}
     oldShoot()
   };
+
   function spawnBoss(){things=things.filter(o=>o.kind!=='bad');boss={x:W/2,y:90,r:46,hp:35+level*12,maxHp:35+level*12,t:0,dir:1};bossCooldown=0;say('BOSS '+level+'!','#ff6b82');shake=8}
   function wave(){let pattern=Math.floor(Math.random()*3),n=5+Math.min(4,level);for(let i=0;i<n;i++){addEnemy();let o=things[things.length-1];if(pattern===0)o.x=W*(i+1)/(n+1);else if(pattern===1)o.x=W/2+(i-(n-1)/2)*34;else o.x=25+Math.random()*(W-50);o.y=-25-i*28}say('ENEMY WAVE','#ff8a6b')}
+
+  die=function(){
+    oldDie();
+    reviving=true;
+    setTimeout(()=>{updateCoins();reviveBtn.style.display='block'},330);
+  };
+
+  reviveBtn.onclick=()=>{
+    const cost=reviveCost();
+    if(coins<cost)return;
+    coins-=cost;updateCoins();
+    reviving=false;over.classList.add('hidden');
+    things=things.filter(o=>o.kind!=='bad');shots=[];particles=[];
+    player.x=W/2;player.target=W/2;player.y=H*.78;
+    shield=1;spawn=.55;running=true;last=performance.now();
+    say('REVIVED!','#ffe47a');
+    requestAnimationFrame(loop);
+  };
+
   update=function(dt){
-    const preScore=score, preKills=kills;
+    // Grab coins before the base update treats core pickups as score items.
+    for(let i=things.length-1;i>=0;i--){
+      const o=things[i];
+      if(o.kind==='core'&&o.isCoin){
+        const dx=o.x-player.x,dy=o.y-player.y,rr=o.r+player.r;
+        if(dx*dx+dy*dy<rr*rr){
+          things.splice(i,1);coins++;updateCoins();burst(o.x,o.y,'#ffd95a',18);say('+1 COIN','#ffd95a');
+          if(navigator.vibrate)navigator.vibrate(14);
+        }
+      }
+    }
+
+    const preScore=score;
     oldUpdate(dt); if(!running)return;
+
     for(const o of things)if(o.kind==='bad'){
       o.t=(o.t||0)+dt;
       if(o.beh==='zig')o.x=Math.max(o.r,Math.min(W-o.r,o.baseX+Math.sin(o.t*4.2)*55));
@@ -55,14 +110,22 @@
     if(boss){
       boss.t+=dt;bossCooldown-=dt;boss.x+=boss.dir*(80+level*8)*dt;if(boss.x<boss.r||boss.x>W-boss.r)boss.dir*=-1;
       if(bossCooldown<=0){for(let k=-2;k<=2;k++){let r=11;things.push({kind:'bad',x:boss.x+k*22,y:boss.y+30,r,vy:(115+level*14),a:0,beh:'normal',hp:1,maxHp:1,color:'#ff315c'})}bossCooldown=Math.max(.7,1.5-level*.08)}
-      for(let i=shots.length-1;i>=0;i--){let s=shots[i],dx=s.x-boss.x,dy=s.y-boss.y;if(dx*dx+dy*dy<(s.r+boss.r)**2){boss.hp--;if(!s.pierce)shots.splice(i,1);burst(s.x,s.y,s.color,5);if(boss.hp<=0){score+=750*level;bossKills++;level++;nextBoss+=2500;burst(boss.x,boss.y,'#fff',80);say('LEVEL '+level+' • SPEED UP!','#77f7ff');boss=null;things=things.filter(o=>o.kind!=='bad');shake=18;break}}}
+      for(let i=shots.length-1;i>=0;i--){let s=shots[i],dx=s.x-boss.x,dy=s.y-boss.y;if(dx*dx+dy*dy<(s.r+boss.r)**2){boss.hp--;if(!s.pierce)shots.splice(i,1);burst(s.x,s.y,s.color,5);if(boss.hp<=0){score+=750*level;bossKills++;level++;nextBoss+=2500;burst(boss.x,boss.y,'#fff',80);say('LEVEL '+level+' • SPEED UP!','#77f7ff');boss=null;things=things.filter(o=>o.kind!=='bad');shake=18;updateCoins();break}}}
       if(boss){let dx=boss.x-player.x,dy=boss.y-player.y;if(dx*dx+dy*dy<(boss.r+player.r)**2){if(shield){shield=0;boss.hp-=5;say('SHIELD SAVED YOU','#72a7ff')}else{die();return}}}
     }
     for(const o of things)if(o.kind==='bad'&&!o.near&&o.y>player.y-8&&o.y<player.y+20){let d=Math.abs(o.x-player.x);if(d>o.r+player.r&&d<o.r+player.r+18){o.near=true;nearMisses++;score+=25*mult;say('NEAR MISS +'+(25*mult),'#8cffb7')}}
     scoreEl.textContent=Math.floor(score);
   };
-  draw=function(){oldDraw();
+
+  draw=function(){
+    oldDraw();
+    // Paint coins over the old core artwork so collectibles read clearly as coins.
+    for(const o of things)if(o.kind==='core'&&o.isCoin){
+      x.save();x.translate(o.x,o.y);x.rotate(o.a);x.shadowBlur=18;x.shadowColor='#ffd95a';x.fillStyle='#f6b92b';x.strokeStyle='#fff1a6';x.lineWidth=2;x.beginPath();x.arc(0,0,o.r,0,Math.PI*2);x.fill();x.stroke();x.fillStyle='#7a4b00';x.font='900 13px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText('$',0,1);x.restore();
+    }
     if(boss){x.save();x.translate(boss.x,boss.y);x.shadowBlur=30;x.shadowColor='#ff315c';x.strokeStyle='#ff6b82';x.fillStyle='#32102a';x.lineWidth=4;x.beginPath();for(let i=0;i<12;i++){let a=i*Math.PI/6,r=boss.r*(i%2?0.72:1);i?x.lineTo(Math.cos(a)*r,Math.sin(a)*r):x.moveTo(Math.cos(a)*r,Math.sin(a)*r)}x.closePath();x.fill();x.stroke();x.restore();x.fillStyle='#30111b';x.fillRect(30,112,W-60,9);x.fillStyle='#ff5475';x.fillRect(30,112,(W-60)*boss.hp/boss.maxHp,9)}
     x.save();x.font='800 12px system-ui';x.fillStyle='#cbd5ff';x.textAlign='center';x.fillText('LEVEL '+level+(shield?' • SHIELD':'')+(mult>1?' • 2X':''),W/2,145);x.restore()
   };
+
+  updateCoins();
 })();
